@@ -195,7 +195,8 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 --
 -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
-vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+vim.keymap.set('t', 'jk', '[[<C-\\><C-n>]]', { desc = 'Exit terminal mode' })
+vim.keymap.set('t', '<Esc><Esc>', '[[<C-\\><C-n>]]', { desc = 'Exit terminal mode' })
 
 -- TIP: Disable arrow keys in normal mode
 -- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
@@ -256,6 +257,13 @@ rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   -- NOTE: Plugins can be added via a link or github org/name. To run setup automatically, use `opts = {}`
+  --
+  {
+    'vyfor/cord.nvim',
+    build = ':Cord update', -- This builds the Rust server for the plugin
+    event = 'VeryLazy',
+    opts = {}, -- This tells it to use the default settings
+  },
   { 'NMAC427/guess-indent.nvim', opts = {} },
 
   -- Alternatively, use `config = function() ... end` for full control over the configuration.
@@ -596,13 +604,17 @@ require('lazy').setup({
         -- clangd = {},
         -- gopls = {},
         -- pyright = {},
-        -- rust_analyzer = {},
+        rust_analyzer = {},
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        -- ts_ls = {},
+        ts_ls = {},
+        tailwindcss = {},
+        cssls = {},
+        html = {},
+        jsonls = {},
       }
 
       -- Ensure the servers and tools above are installed
@@ -613,8 +625,19 @@ require('lazy').setup({
       --
       -- You can press `g?` for help in this menu.
       local ensure_installed = vim.tbl_keys(servers or {})
+      for i, name in ipairs(ensure_installed) do
+        if name == 'rust_analyzer' then ensure_installed[i] = 'rust-analyzer' end
+        if name == 'lua_ls' then ensure_installed[i] = 'lua-language-server' end
+        if name == 'ts_ls' then ensure_installed[i] = 'typescript-language-server' end
+        if name == 'tailwindcss' then ensure_installed[i] = 'tailwindcss-language-server' end
+        -- JSON Fix
+        if name == 'jsonls' then ensure_installed[i] = 'json-lsp' end
+        -- HTML Fix
+        if name == 'html' then ensure_installed[i] = 'html-lsp' end
+        -- CSS Fix
+        if name == 'cssls' then ensure_installed[i] = 'css-lsp' end
+      end
       vim.list_extend(ensure_installed, {
-        'lua_ls', -- Lua Language server
         'stylua', -- Used to format Lua code
         -- You can add other tools here that you want Mason to install
       })
@@ -686,6 +709,11 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        rust = { 'rustfmt' },
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettierd', 'prettier', stop_after_first = true },
+        javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
