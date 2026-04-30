@@ -610,6 +610,7 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
+        emmet_ls = {},
         ts_ls = {},
         tailwindcss = {},
         cssls = {},
@@ -630,12 +631,10 @@ require('lazy').setup({
         if name == 'lua_ls' then ensure_installed[i] = 'lua-language-server' end
         if name == 'ts_ls' then ensure_installed[i] = 'typescript-language-server' end
         if name == 'tailwindcss' then ensure_installed[i] = 'tailwindcss-language-server' end
-        -- JSON Fix
         if name == 'jsonls' then ensure_installed[i] = 'json-lsp' end
-        -- HTML Fix
         if name == 'html' then ensure_installed[i] = 'html-lsp' end
-        -- CSS Fix
         if name == 'cssls' then ensure_installed[i] = 'css-lsp' end
+        if name == 'emmet_ls' then ensure_installed[i] = 'emmet-ls' end
       end
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
@@ -902,14 +901,14 @@ require('lazy').setup({
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
